@@ -2,7 +2,7 @@ import React from 'react';
 import { useScheduleStore } from '@/store/useScheduleStore';
 import { PERIOD_LABELS, ROLE_LABELS } from '@/types';
 import type { LeavePeriod } from '@/types';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Send, CheckCircle, XCircle, Clock } from 'lucide-react';
 
 const LEAVE_PERIOD_OPTIONS: { value: LeavePeriod; label: string }[] = [
@@ -170,10 +170,8 @@ export default function Leave() {
   const user = useScheduleStore((s) => s.currentUser);
   const navigate = useNavigate();
 
-  if (!user) return <Navigate to="/login" replace />;
-
-  const canApprove = user.role === 'leader';
-  const canSubmit = user.role === 'member';
+  const canApprove = user?.role === 'leader';
+  const canSubmit = user?.role === 'member';
 
   return (
     <div className="min-h-screen bg-slate-900 text-white">

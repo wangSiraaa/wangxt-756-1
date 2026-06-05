@@ -5,13 +5,8 @@ import MemberDetailPanel from '@/components/MemberDetailPanel';
 import ShiftEditModal from '@/components/ShiftEditModal';
 import ConflictPanel from '@/components/ConflictPanel';
 import ConflictBanner from '@/components/ConflictBanner';
-import { Navigate } from 'react-router-dom';
 
 export default function Schedule() {
-  const user = useScheduleStore((s) => s.currentUser);
-
-  if (!user) return <Navigate to="/login" replace />;
-
   return (
     <div className="min-h-screen bg-slate-900 text-white">
       <Header />

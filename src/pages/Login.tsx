@@ -3,6 +3,7 @@ import { useScheduleStore } from '@/store/useScheduleStore';
 import { Shield, Users, Eye } from 'lucide-react';
 import type { Role } from '@/types';
 import { ROLE_LABELS } from '@/types';
+import { useNavigate, Navigate } from 'react-router-dom';
 
 const ROLE_ICONS: Record<Role, React.ReactNode> = {
   leader: <Shield className="w-8 h-8" />,
@@ -28,21 +29,35 @@ const ROLE_ACCOUNTS: Record<Role, { username: string; password: string }[]> = {
 
 export default function Login() {
   const login = useScheduleStore((s) => s.login);
+  const currentUser = useScheduleStore((s) => s.currentUser);
+  const navigate = useNavigate();
   const [selectedRole, setSelectedRole] = React.useState<Role | null>(null);
   const [username, setUsername] = React.useState('');
   const [password, setPassword] = React.useState('');
   const [error, setError] = React.useState('');
 
+  if (currentUser) {
+    return <Navigate to="/schedule" replace />;
+  }
+
   const handleQuickLogin = (role: Role, u: string, p: string) => {
     const ok = login(u, p);
-    if (!ok) setError('登录失败，请检查账号密码');
+    if (ok) {
+      navigate('/schedule', { replace: true });
+    } else {
+      setError('登录失败，请检查账号密码');
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     const ok = login(username, password);
-    if (!ok) setError('账号或密码错误');
+    if (ok) {
+      navigate('/schedule', { replace: true });
+    } else {
+      setError('账号或密码错误');
+    }
   };
 
   return (
