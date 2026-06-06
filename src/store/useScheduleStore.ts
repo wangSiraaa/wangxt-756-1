@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import type { Member, Shift, LeaveRequest, Position, Account, Role, Conflict } from '@/types';
+import type { Member, Shift, LeaveRequest, Position, Account, Role, Conflict, Annotation } from '@/types';
 import { ACCOUNTS, POSITIONS, MEMBERS, SHIFTS, LEAVE_REQUESTS, WEEK_DATES } from '@/fixtures';
 import { getAllConflicts } from '@/utils/conflictCheck';
 
@@ -15,6 +15,8 @@ interface ScheduleState {
   showConflictPanel: boolean;
   showShiftEdit: { positionId: string; date: string; period: string } | null;
   conflicts: Conflict[];
+  annotations: Annotation[];
+  showAnnotationPanel: boolean;
 
   login: (username: string, password: string) => boolean;
   logout: () => void;
@@ -30,6 +32,10 @@ interface ScheduleState {
   approveLeave: (leaveId: string) => void;
   rejectLeave: (leaveId: string) => void;
   recalculateConflicts: () => void;
+  openAnnotationPanel: () => void;
+  closeAnnotationPanel: () => void;
+  addAnnotation: (content: string) => void;
+  deleteAnnotation: (id: string) => void;
 }
 
 function computeConflicts(
@@ -55,6 +61,8 @@ export const useScheduleStore = create<ScheduleState>()(
       showConflictPanel: false,
       showShiftEdit: null,
       conflicts: computeConflicts(SHIFTS, POSITIONS, MEMBERS, LEAVE_REQUESTS),
+      annotations: [],
+      showAnnotationPanel: false,
 
       login: (username, password) => {
         const account = ACCOUNTS.find(
@@ -149,6 +157,25 @@ export const useScheduleStore = create<ScheduleState>()(
         const conflicts = computeConflicts(shifts, positions, members, leaveRequests);
         set({ conflicts });
       },
+
+      openAnnotationPanel: () => set({ showAnnotationPanel: true }),
+      closeAnnotationPanel: () => set({ showAnnotationPanel: false }),
+
+      addAnnotation: (content) => {
+        const { annotations, currentUser } = get();
+        const newAnnotation: Annotation = {
+          id: `a${Date.now()}`,
+          content,
+          createdAt: new Date().toISOString(),
+          author: currentUser?.displayName || '匿名',
+        };
+        set({ annotations: [newAnnotation, ...annotations] });
+      },
+
+      deleteAnnotation: (id) => {
+        const { annotations } = get();
+        set({ annotations: annotations.filter((a) => a.id !== id) });
+      },
     }),
     {
       name: 'schedule-store',
@@ -157,6 +184,7 @@ export const useScheduleStore = create<ScheduleState>()(
         shifts: state.shifts,
         members: state.members,
         leaveRequests: state.leaveRequests,
+        annotations: state.annotations,
       }),
       onRehydrateStorage: () => (state) => {
         if (state) {

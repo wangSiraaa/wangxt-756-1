@@ -5,6 +5,7 @@ import MemberDetailPanel from '@/components/MemberDetailPanel';
 import ShiftEditModal from '@/components/ShiftEditModal';
 import ConflictPanel from '@/components/ConflictPanel';
 import ConflictBanner from '@/components/ConflictBanner';
+import AnnotationPanel from '@/components/AnnotationPanel';
 
 export default function Schedule() {
   return (
@@ -17,6 +18,7 @@ export default function Schedule() {
       <MemberDetailPanel />
       <ShiftEditModal />
       <ConflictPanel />
+      <AnnotationPanel />
     </div>
   );
 }

@@ -1,14 +1,16 @@
 import { useScheduleStore } from '@/store/useScheduleStore';
 import { ROLE_LABELS, PERIOD_LABELS } from '@/types';
 import type { Period } from '@/types';
-import { LogOut, AlertTriangle, FileDown, CalendarDays } from 'lucide-react';
+import { LogOut, AlertTriangle, FileDown, CalendarDays, MessageSquare } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export default function Header() {
   const user = useScheduleStore((s) => s.currentUser);
   const conflicts = useScheduleStore((s) => s.conflicts);
+  const annotations = useScheduleStore((s) => s.annotations);
   const logout = useScheduleStore((s) => s.logout);
   const openConflictPanel = useScheduleStore((s) => s.openConflictPanel);
+  const openAnnotationPanel = useScheduleStore((s) => s.openAnnotationPanel);
   const navigate = useNavigate();
 
   if (!user) return null;
@@ -39,6 +41,13 @@ export default function Header() {
               <span>{conflicts.length} 项冲突</span>
             </button>
           )}
+          <button
+            onClick={openAnnotationPanel}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-700/50 text-slate-300 text-sm hover:bg-slate-700 transition-colors"
+          >
+            <MessageSquare className="w-4 h-4" />
+            <span>批注 ({annotations.length})</span>
+          </button>
           {canLeave && (
             <button
               onClick={() => navigate('/leave')}

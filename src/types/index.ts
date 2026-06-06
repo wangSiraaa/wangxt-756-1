@@ -54,6 +54,13 @@ export interface Conflict {
   message: string;
 }
 
+export interface Annotation {
+  id: string;
+  content: string;
+  createdAt: string;
+  author: string;
+}
+
 export const PERIOD_LABELS: Record<Period, string> = {
   morning: '早班',
   afternoon: '午班',
